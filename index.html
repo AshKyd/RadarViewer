@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Template</title>
+		<script type="text/javascript" src="jquery-1.3.2.js"></script>
+		<style type="text/css">
+		#radar{background:pink;position:relative;}
+		#radar img{position:absolute;left:0;top:0;}
+		
+		#radar li{list-style:none;}
+		</style>
+		<script type="text/javascript">
+			
+			
+			var radarShow = function(data){
+				var myRadar = 'IDR663';
+				
+				var frames = $('<ol id="radarFrames"></ol>');
+				$.each(data[myRadar],function(index,url){
+					var frame = $('<li><img/></li>');
+					var url = myRadar + '.T.2010'+url;
+					frame.children('img').attr('src','images/'+url);
+					
+					if(index!=0) {
+						frame.children('img').hide();
+					}
+					
+					frames.append(frame);
+				});
+				
+				$('#radarFrames').remove();
+				$('#radar').append(frames);
+				
+			}
+			var radarFail = function(data){console.log('error');}
+			
+			var radarAnimate = function(){
+				var visibleClass = 'visible';
+				var frameThis = $('#radarFrames .'+visibleClass);
+				if(frameThis.length == 0){
+					$('#radarFrames li:first-child').addClass(visibleClass);
+					$('#radarFrames img').fadeOut();
+				}
+					
+				var frameNext = frameThis.next();
+				
+				frameThis.removeClass(visibleClass).children('img').fadeOut(1000);
+				frameNext.addClass(visibleClass).children('img').fadeIn();
+			}
+			
+			$.ajax({
+				url : 'list.js',
+				dataType : 'json',
+				success : radarShow,
+				error : radarFail
+			});
+			
+			setInterval(radarAnimate,500);
+			
+			
+		</script>
+	</head>
+	<body>
+		<div id="radar"></div>
+	</body>
+</html>
