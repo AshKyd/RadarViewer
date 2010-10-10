@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Template</title>
+		<script type="text/javascript" src="jquery-1.3.2.js"></script>
+		<style type="text/css">
+		#radar{background:pink;position:relative;}
+		#radar img{position:absolute;left:0;top:0;}
+		
+		#radar li{list-style:none;}
+		</style>
+		<script type="text/javascript">
+			function negotiateRadar(){
+				var radarList = false;
+				var myLocation = false;
+				//Failure state.
+				var processFailure = function(request,status){console.log(status);}
+				
+				// Process the radar list.
+				var processRadarList = function(data,status){
+					if(!status)
+						localStorage.coords = data;
+					
+					radarList = data;
+					
+					if(myLocation)
+						processComplete();
+				}
+				
+				// Process the location.
+				var processLocation = function(location){
+					myLocation = [location.coords.latitude, location.coords.longitude];
+					if(radarList)
+						processComplete();
+				}
+				
+				// Find the closest radar.
+				var processComplete = function(){
+					var closestRadar = false;
+					var closestDist = false;
+					
+					$.each(radarList,function(index,radar){
+						var myLat = Math.abs(myLocation[0]);
+						var myLon = Math.abs(myLocation[1]);
+						var rLat = Math.abs(radar[3]);
+						var rLon = Math.abs(radar[4]);
+						
+						var dist = Math.abs(myLat - rLat) + Math.abs(myLon - rLon);
+						
+						if(dist < closestDist || closestDist == false) {
+							closestDist = dist;
+							closestRadar = radar;
+						}
+						
+					});
+					
+					console.log(closestRadar,closestDist);
+				}
+				
+				/* Load our database of coordinates */
+				var coords = localStorage.coords;
+				if(!coords){
+					$.ajax({
+						url : 'coords.js',
+						dataType : 'json',
+						success : processRadarList,
+						error : processFailure
+					});
+				} else {
+					processRadarList(coords);
+				}
+				
+				navigator.geolocation.getCurrentPosition(processLocation);
+				
+			}
+			
+			negotiateRadar();
+			
+		</script>
+	</head>
+	<body>
+		<div id="radar"></div>
+	</body>
+</html>
