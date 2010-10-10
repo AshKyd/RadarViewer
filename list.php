@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 define('SERVER','ftp2.bom.gov.au');
 define('SERVERPATH', 'anon/gen/radar/');
@@ -56,5 +57,6 @@ function createJsonIndex(){
 	file_put_contents(LISTFILENAME,json_encode($groups));
 
 }
+
 updateFromFtp();
 createJsonIndex();
