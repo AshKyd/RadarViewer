@@ -10,9 +10,17 @@
 		#radar li{list-style:none;}
 		</style>
 		<script type="text/javascript">
+			
+			var radarList = false;
+			var myLocation = false;
+			
+			function showStaticRadar(radar,zoom){
+				var radarUri = 'http://www.bom.gov.au/radar/IDR'+radar+zoom+'.gif';
+				var $image = $('<img class="radarFrame">').attr('src',radarUri);
+				$('body').append($image);
+			}
+		
 			function negotiateRadar(){
-				var radarList = false;
-				var myLocation = false;
 				//Failure state.
 				var processFailure = function(request,status){console.log(status);}
 				
@@ -54,7 +62,7 @@
 						
 					});
 					
-					console.log(closestRadar,closestDist);
+					showStaticRadar(closestRadar[7],3);
 				}
 				
 				/* Load our database of coordinates */
