@@ -1,7 +1,8 @@
+#!/usr/bin/php
 <?php
 $fileAsArray = Array();
 
-if (($handle = fopen("myfile.csv", "r")) !== FALSE) {
+if (($handle = fopen($argv[1], "r")) !== FALSE) {
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
         $fileAsArray[] = $data;
     }
