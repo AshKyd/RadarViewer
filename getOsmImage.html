@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Template</title>
+		<script type="text/javascript">
+			var lat = -27.718;
+			var lon = 153.24;
+			var dist = 64;
+			getBounds(lat,lon,dist);
+			
+			// Logic based on the work of Chris Veness of http://www.movable-type.co.uk/scripts/latlong.html
+			// Want to use this to do this: http://dev.openlayers.org/apidocs/files/OpenLayers/Layer/Image-js.html
+			function getBounds(lat,lon,dist){
+				/** Convert numeric degrees to radians */
+				var toRad = function(num) {return num * Math.PI / 180;}
+
+				/** Convert radians to numeric (signed) degrees */
+				var toDeg = function(num) { return num * 180 / Math.PI;}
+				
+				var getLat = function(lat1, dist, brng) { 
+					brng = toRad(brng);
+					return toDeg(Math.asin( Math.sin(lat1)*Math.cos(dist) + Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) ));
+				}
+				
+				var getLon = function(lat1, lon1, dist, brng) { 
+					brng = toRad(brng);
+					var lat2 = toRad(getLat(lat1,dist,brng));
+					var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1), Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
+					lon2 = (lon2+3*Math.PI)%(2*Math.PI) - Math.PI;  // normalise to -180...+180
+					return toDeg(lon2);
+				}
+				
+				var R = 6371;
+				dist = dist / R;
+				lat = toRad(lat);
+				lon = toRad(lon);
+				
+				var bounds = [
+					getLat(lat,dist,0),
+					getLon(lat,lon,dist,90),
+					getLat(lat,dist,180),
+					getLon(lat,lon,dist,270)
+				];
+				return bounds;
+			}
+
+
+
+
+		</script>
+	</head>
+	<body>
+
+	</body>
+</html>
