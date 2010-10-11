@@ -2,11 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 		<title>Template</title>
+		<script type="text/javascript" src="jquery-1.3.2.js"></script>
 		<script type="text/javascript">
-			var lat = -27.718;
-			var lon = 153.24;
-			var dist = 64;
-			getBounds(lat,lon,dist);
 			
 			// Logic based on the work of Chris Veness of http://www.movable-type.co.uk/scripts/latlong.html
 			// Want to use this to do this: http://dev.openlayers.org/apidocs/files/OpenLayers/Layer/Image-js.html
@@ -42,10 +39,25 @@
 					getLon(lat,lon,dist,270)
 				];
 				return bounds;
-			}
+			};
 
-
-
+			// http://tile.openstreetmap.org/cgi-bin/export?bbox=149.192432010103,-30.075565827788,150.507556825031,-28.924434172212
+			
+			$.getJSON('coords.js',function(data){
+				
+				var bounds = [];
+				
+				$.each(data,function(index,radar){
+					var thisRadar = getBounds(radar[3],radar[4],64);
+					var url = '<li><a href="http://tile.openstreetmap.org/cgi-bin/export?bbox=' + [thisRadar[3],thisRadar[2],thisRadar[1],thisRadar[0]].join() + '&scale=1010000&format=png">'+radar[1]+'</a></li>';
+					bounds.push(url);
+					
+				});
+				
+				bounds = '<ul>'+bounds.join('')+'</ul>';
+				$('body').append(bounds);
+				
+			});
 
 		</script>
 	</head>
